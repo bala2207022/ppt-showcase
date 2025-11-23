@@ -1,0 +1,809 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Media UI Demo</title>
+<style>
+  :root{
+    --bg:#141414;
+    --panel:#1b1b1b;
+    --card:#222;
+    --accent:#e50914;
+    --text:#fff;
+    --muted:#b3b3b3;
+  }
+
+  *{box-sizing:border-box}
+
+  body{
+    margin:0;
+    background:#0b0b0b;
+    color:var(--text);
+    font-family:-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Helvetica,Arial;
+  }
+
+  .screen{
+    max-width:1220px;
+    margin:0 auto;
+    padding:20px;
+    display:none;
+    animation:fade .35s ease;
+  }
+  .screen.active{display:block}
+
+  @keyframes fade{
+    from{opacity:0;transform:translateY(6px)}
+    to{opacity:1;transform:translateY(0)}
+  }
+
+  /* --- PROFILES --- */
+  .center{
+    min-height:85dvh;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    gap:48px;
+  }
+
+  h1{margin:0;font-size:46px}
+
+  .profiles{display:flex;gap:90px}
+  .profile{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    cursor:pointer;
+  }
+  .box{
+    width:180px;
+    height:180px;
+    border-radius:14px;
+    overflow:hidden;
+    background:var(--card);
+    outline:4px solid transparent;
+    transition:.25s;
+  }
+  .box img{
+    width:100%;
+    height:100%;
+    object-fit:cover;
+    display:block;
+    transition:.25s;
+  }
+  .profile:hover .box{
+    transform:scale(1.06);
+    box-shadow:0 0 28px rgba(255,255,255,.15);
+  }
+  .profile:hover .box img{transform:scale(1.08)}
+  .name{margin-top:14px;font-size:20px;color:var(--muted)}
+  .profile:hover .name{color:#fff}
+
+  .start{
+    background:var(--accent);
+    color:#fff;
+    border:0;
+    padding:14px 44px;
+    border-radius:8px;
+    font-size:18px;
+    cursor:pointer;
+    box-shadow:0 8px 24px rgba(229,9,20,.35);
+    transition:.2s;
+  }
+  .start:hover{
+    transform:translateY(-1px);
+    background:#b00610;
+  }
+
+  /* --- APP NAV --- */
+  .app{
+    min-height:100dvh;
+    background:radial-gradient(1200px 600px at 50% -220px,#2b0d0d 0%, #141414 50%, #0b0b0b 100%);
+  }
+  .nav{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:12px 0 8px;
+  }
+  .left{display:flex;align-items:center;gap:14px}
+  .tabs{display:flex;gap:12px;flex-wrap:wrap}
+  .tab{
+    padding:9px 16px;
+    border-radius:999px;
+    background:transparent;
+    color:#fff;
+    opacity:.85;
+    cursor:pointer;
+    user-select:none;
+  }
+  .tab.active{
+    background:#fff;
+    color:#000;
+    font-weight:700;
+    opacity:1;
+  }
+  .right{display:flex;align-items:center;gap:12px}
+  .pill{
+    width:36px;
+    height:36px;
+    border-radius:999px;
+    background:#2a2a2a;
+    display:grid;
+    place-items:center;
+  }
+
+  /* --- HERO --- */
+  .hero{
+    position:relative;
+    height:420px;
+    border-radius:22px;
+    overflow:hidden;
+    background:#000;
+    margin-bottom:22px;
+    cursor:pointer;
+  }
+  .hero img{
+    width:100%;
+    height:100%;
+    object-fit:cover;
+    display:block;
+    filter:contrast(1.05) saturate(1.05);
+  }
+  .hero::after{
+    content:"";
+    position:absolute;
+    inset:0;
+    background:linear-gradient(180deg,rgba(0,0,0,.05) 0%,rgba(0,0,0,.35) 55%,rgba(0,0,0,.75) 100%);
+  }
+  .hero-content{
+    position:absolute;
+    left:24px;
+    right:24px;
+    bottom:24px;
+    z-index:2;
+    display:flex;
+    flex-direction:column;
+    gap:14px;
+  }
+  .kicker{font-size:13px;letter-spacing:.12em;opacity:.8}
+  .title{font-size:44px;font-weight:900;line-height:1.08}
+  .meta{display:flex;gap:12px;flex-wrap:wrap}
+  .badge{
+    background:rgba(255,255,255,.1);
+    backdrop-filter:blur(4px);
+    border-radius:12px;
+    padding:8px 12px;
+    font-size:14px;
+  }
+
+  /* --- ROWS / GRIDS --- */
+  .row{margin:18px 0}
+  .row h2{font-size:20px;margin:0 0 10px 4px}
+
+  .scroller{
+    display:flex;
+    gap:14px;
+    overflow-x:auto;
+    padding-bottom:6px;
+  }
+
+  /* PERSON CARDS */
+  .card{
+    min-width:260px;
+    aspect-ratio:16/9;
+    border-radius:16px;
+    overflow:hidden;
+    background:#111;
+    position:relative;
+  }
+  .card img{
+    width:100%;
+    height:100%;
+    object-fit:cover;
+    display:block;
+  }
+  .card-content{
+    position:absolute;
+    inset:0;
+    padding:14px 14px 12px;
+    display:flex;
+    flex-direction:column;
+    justify-content:flex-end;
+    background:linear-gradient(180deg,rgba(0,0,0,0.15) 0%,rgba(0,0,0,0.85) 100%);
+  }
+  .card-name{
+    font-size:18px;
+    font-weight:700;
+    margin:0 0 2px;
+  }
+  .card-role{
+    font-size:13px;
+    color:#e5e5e5;
+    margin:0 0 6px;
+  }
+  .card-links{
+    display:flex;
+    flex-wrap:wrap;
+    gap:6px;
+  }
+  .card-links a{
+    font-size:12px;
+    padding:3px 8px;
+    border-radius:999px;
+    background:rgba(255,255,255,0.14);
+    color:#fff;
+    text-decoration:none;
+  }
+  .card-links a:hover{
+    background:#ffffff;
+    color:#000;
+  }
+
+  /* --- HIDE/SHOW TABS CONTENT --- */
+  .tabview{display:none}
+  .tabview.active{display:block}
+
+  /* --- OVERLAY PANEL (PPT area) --- */
+  .overlay{
+    position:fixed;
+    inset:0;
+    background:rgba(0,0,0,.75);
+    display:none;
+    place-items:center;
+    z-index:9999;
+  }
+  .overlay.show{display:grid}
+
+  .panel{
+    width:min(1000px,92vw);
+    max-height:86vh;
+    background:#151515;
+    color:#fff;
+    border-radius:18px;
+    overflow:hidden;
+    box-shadow:0 20px 60px rgba(0,0,0,.7);
+    display:grid;
+    grid-template-rows:auto 1fr;
+  }
+  .panel-header{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:14px 16px;
+    background:#1b1b1b;
+  }
+  .panel-title{font-size:22px;font-weight:800;margin:0}
+  .panel-header-controls{display:flex;align-items:center;gap:8px}
+  .panel-body{padding:18px;overflow:auto}
+  .sub{color:#cfcfcf;margin:0 0 14px}
+  .sub:empty{display:none}
+
+  /* Slide frame */
+  .placeholder{
+    border-radius:18px;
+    padding:32px 40px;
+    background:radial-gradient(140% 160% at 0% 0%, #ffffff 0%, #f4f4f4 40%, #e2e2e2 100%);
+    box-shadow:0 18px 40px rgba(0,0,0,.55);
+    width:100%;
+    max-width:900px;
+    aspect-ratio:16/9;
+    display:flex;
+    flex-direction:column;
+    justify-content:flex-start;
+    align-items:flex-start;
+    text-align:left;
+    color:#111827;
+    position:relative;
+    overflow:hidden;
+    animation:slideIn .35s ease;
+    background-size:cover;
+    background-position:center;
+    background-repeat:no-repeat;
+  }
+
+  .placeholder::after{
+    content:"";
+    position:absolute;
+    inset:0;
+    background:radial-gradient(120% 140% at 110% -10%, rgba(229,9,20,0.10), transparent 60%);
+    pointer-events:none;
+  }
+
+  /* when slide has bg image */
+  .placeholder.bg-slide{
+    background-color:#020617;
+    color:#ecedee;
+  }
+  .placeholder.bg-slide::after{display:none}
+
+  /* Quote slide – perfectly centered */
+  .placeholder.quote{
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    align-items:center;
+    text-align:center;
+    padding:40px;
+  }
+  .placeholder.quote .ppt-slide-footer{margin-top:16px}
+
+  @keyframes slideIn{
+    from{opacity:0;transform:translateY(14px) scale(.97)}
+    to{opacity:1;transform:translateY(0) scale(1)}
+  }
+
+  /* PPT slide text (base) */
+  .ppt-slide-title{
+    font-size:30px;
+    font-weight:700;
+    margin:0 0 14px;
+    position:relative;
+    z-index:1;
+  }
+  .ppt-slide-main{
+    font-size:19px;
+    line-height:1.6;
+    margin:0 0 12px;
+    position:relative;
+    z-index:1;
+    max-width:92%;
+    white-space:pre-line;
+  }
+  .ppt-slide-main span{font-style:italic}
+
+  .ppt-slide-bullets{
+    margin:14px 0 0;
+    padding-left:22px;
+    font-size:17px;
+    text-align:left;
+    position:relative;
+    z-index:1;
+  }
+  .ppt-slide-bullets li{margin-bottom:6px}
+  .ppt-slide-bullets a{
+    color:#7dd3fc;
+    text-decoration:underline;
+  }
+
+  .ppt-slide-footer{
+    margin-top:auto;
+    font-size:16px;
+    color:#e5e7eb;
+    position:relative;
+    z-index:1;
+    text-align:center;
+  }
+
+  /* THEME from slide 2 onwards (except pure image) */
+  .placeholder.theme-main{
+    background:radial-gradient(120% 200% at 0% 0%, #0b1120 0%, #020617 55%, #000000 100%);
+    color:#e5e7eb;
+  }
+  .placeholder.theme-main .ppt-slide-title{
+    color:#ffffff;
+    text-align:left;
+    font-size:30px;
+    letter-spacing:0.01em;
+  }
+  .placeholder.theme-main .ppt-slide-main{
+    color:#d1d5db;
+    text-align:center;
+    max-width:78%;
+    margin:0 auto 18px;
+  }
+  .placeholder.theme-main .ppt-slide-bullets{
+    color:#e5e7eb;
+  }
+  .placeholder.theme-main .ppt-slide-bullets li::marker{
+    color:#38bdf8;
+  }
+
+  .slide-controls{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-top:14px;
+    font-size:14px;
+  }
+  .slide-controls button{
+    border:0;
+    background:#2a2a2a;
+    color:#fff;
+    padding:6px 14px;
+    border-radius:999px;
+    cursor:pointer;
+  }
+  .slide-controls button:hover{background:#3a3a3a}
+
+  .close, .fs-btn{
+    border:0;
+    background:#2a2a2a;
+    color:#fff;
+    width:36px;
+    height:36px;
+    border-radius:50%;
+    cursor:pointer;
+    display:grid;
+    place-items:center;
+  }
+</style>
+</head>
+<body>
+
+<!-- ===== PROFILES SCREEN ===== -->
+<section id="profiles" class="screen active">
+  <div class="center">
+    <h1>Welcome to Our Project Presentation</h1>
+    <div class="profiles">
+      <div class="profile" data-name="Bala">
+        <div class="box"><img src="bala.jpeg" alt="Bala"></div>
+        <div class="name">Bala</div>
+      </div>
+      <div class="profile" data-name="Valentina">
+        <div class="box"><img src="s.jpeg" alt="Valentina"></div>
+        <div class="name">Valentina</div>
+      </div>
+    </div>
+    <button class="start" id="startBtn">Start</button>
+  </div>
+</section>
+
+<!-- ===== APP (HOME + TABS) ===== -->
+<section id="app" class="screen app">
+  <div class="nav">
+    <div class="left">
+      <div class="tabs" id="tabs">
+        <div class="tab active" data-tab="home">Home</div>
+      </div>
+    </div>
+    <div class="right">
+      <div class="pill" title="Search">🔍</div>
+      <div class="pill" title="Notifications">🔔</div>
+    </div>
+  </div>
+
+  <!-- HOME -->
+  <div id="home" class="tabview active">
+    <div class="hero" id="heroClickable">
+      <img id="heroImage" src="pro.jpeg" alt="Hero">
+      <div class="hero-content">
+        <div class="kicker"></div>
+        <div id="heroTitle" class="title">Social Media Engagement and Mental Health Risk Analysis</div>
+        <div class="meta">
+          <div class="badge">MSBA-285</div>
+          <div class="badge">CAPSTONE PROJECT 1</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <h2>Today’s Picks</h2>
+      <div class="scroller">
+
+        <!-- Bala card -->
+        <div class="card">
+          <img src="p1.jpeg" alt="Bala">
+          <div class="card-content">
+            <h3 class="card-name">Balakrishna Reddy</h3>
+            <p class="card-role"> Data Engineering & Machine Learning</p>
+            <div class="card-links">
+              <a href="https://linkedin.com/in/bala-krishna-7483a7322" target="_blank" rel="noopener noreferrer">LinkedIn</a>
+              <a href="https://github.com/bala2207022" target="_blank" rel="noopener noreferrer">GitHub</a>
+              <a href="https://gitlab.com/bala2207" target="_blank" rel="noopener noreferrer">GitLab</a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Val card -->
+        <div class="card">
+          <img src="p2.jpeg" alt="Valentina">
+          <div class="card-content">
+            <h3 class="card-name">Valentina Varani</h3>
+            <p class="card-role">International Student · D1 Athlete · Corporate Finance</p>
+            <div class="card-links">
+              <a href="https://linkedin.com/in/valentinavarani" target="_blank" rel="noopener noreferrer">LinkedIn</a>
+              <a href="https://gitlab.com/v_varani" target="_blank" rel="noopener noreferrer">GitLab</a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Dylan card -->
+        <div class="card">
+          <img src="p3.jpg" alt="Professor Dylan Bernardi">
+          <div class="card-content">
+            <h3 class="card-name">Professor Dylan Bernardi</h3>
+            <p class="card-role">Backend Engineer @ GitLab · Visiting Lecturer @ UOP</p>
+            <div class="card-links">
+              <a href="https://linkedin.com/in/dylan-bernardi-07" target="_blank" rel="noopener noreferrer">LinkedIn</a>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+<!-- ===== OVERLAY (PPT / slides area) ===== -->
+<div id="overlay" class="overlay" aria-hidden="true">
+  <div class="panel" role="dialog" aria-modal="true">
+    <div class="panel-header">
+      <h3 id="panelTitle" class="panel-title">Social Media Engagement and Mental Health Risk Analysis</h3>
+      <div class="panel-header-controls">
+        <button id="fullscreenBtn" class="fs-btn" aria-label="Fullscreen">⤢</button>
+        <button id="closeOverlay" class="close" aria-label="Close">✕</button>
+      </div>
+    </div>
+    <div class="panel-body">
+      <p id="panelSub" class="sub"></p>
+
+      <div class="placeholder" id="slideBox">
+        <h2 id="slideTitle" class="ppt-slide-title"></h2>
+        <p id="slideMain" class="ppt-slide-main"></p>
+        <ul id="slideBullets" class="ppt-slide-bullets"></ul>
+        <p id="slideFooter" class="ppt-slide-footer"></p>
+      </div>
+
+      <div class="slide-controls">
+        <button id="prevSlide">◀ Prev</button>
+        <span id="slideCounter">1 / 1</span>
+        <button id="nextSlide">Next ▶</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  // --- Start -> open app ---
+  document.getElementById('startBtn').addEventListener('click',()=>{
+    document.getElementById('profiles').classList.remove('active');
+    document.getElementById('app').classList.add('active');
+
+    const HERO_IMAGE_PATH = "pro.jpeg";
+    const HERO_TITLE_TEXT = "Social Media Engagement and Mental Health Risk Analysis";
+    document.getElementById('heroImage').src = HERO_IMAGE_PATH;
+    document.getElementById('heroTitle').textContent = HERO_TITLE_TEXT;
+  });
+
+  // --- Tab navigation (only Home for now) ---
+  const tabs=document.querySelectorAll('.tab');
+  const views=document.querySelectorAll('.tabview');
+  function activateTab(name){
+    tabs.forEach(t=>t.classList.toggle('active', t.dataset.tab===name));
+    views.forEach(v=>v.classList.toggle('active', v.id===name));
+  }
+  document.getElementById('tabs').addEventListener('click',(e)=>{
+    const t=e.target.closest('.tab'); if(!t) return;
+    activateTab(t.dataset.tab);
+  });
+
+  // --- Overlay & slide elements ---
+  const overlay = document.getElementById('overlay');
+  const panelTitle = document.getElementById('panelTitle');
+  const panelSub = document.getElementById('panelSub');
+  const slideTitle   = document.getElementById('slideTitle');
+  const slideMain    = document.getElementById('slideMain');
+  const slideBullets = document.getElementById('slideBullets');
+  const slideFooter  = document.getElementById('slideFooter');
+  const slideCounter = document.getElementById('slideCounter');
+  const prevSlideBtn = document.getElementById('prevSlide');
+  const nextSlideBtn = document.getElementById('nextSlide');
+  const slideBox     = document.getElementById('slideBox');
+  const fullscreenBtn = document.getElementById('fullscreenBtn');
+
+  // --- PPT slides data (6 slides, each with its own bg) ---
+  const slides = [
+    {
+      id: 'intro-quote',
+      title: 'Opening Quote',
+      main: '“I want technology to understand how we feel, not just what we click.”',
+      isQuote: true,
+      bg: '1.jpg',    // quote background
+      bullets: [],
+      footer: ''
+    },
+    {
+      id: 'intro',
+      title: 'Introduction',
+      main: 'What this project is really about.',
+      bg: 'jkjk.jpg',   // dark smoke / texture background
+      bullets: [
+        'Our project analyzes how social media engagement patterns can reflect emotional risks and mental health signals.',
+        'We collect Reddit data (posts + comments) and apply NLP to classify each post/comment as positive, neutral, or negative.',
+        'We compute behavioral features such as likes, comments, interaction timing, and engagement ratios for every user.',
+        'Using these NLP outputs and behavioral features, we train ML models to classify users into High, Moderate, or Low emotional-risk categories.',
+        'The model assigns a risk score that reflects how much a user is surrounded by negative or emotionally heavy content.',
+        'A Streamlit dashboard visualizes risk distribution, top high-risk users, and behavioral heatmaps.',
+        'The goal is to reveal emotional trends early and support healthier digital environments.'
+      ],
+      footer: ''
+    },
+    {
+      id: 'data-method',
+      title: 'Data Pipeline',
+      main: '',
+      bg: 'pip.jpeg',       // pipeline image
+      isImageOnly: true,
+      bullets: [],
+      footer: ''
+    },
+    {
+      id: 'dashboard',
+      title: 'Dashboard Overview – Real Panels',
+      main: 'How we actually explore risk and engagement.',
+      bg: 'jkjk.jpg',
+      bullets: [
+        'Our interactive dashboard contains 4 main graphs and 1 detailed table for risk exploration.',
+        'We monitor risk distribution, user engagement behavior, emotion trends, and key feature impact in one view.',
+        'The table lists top users with risk category, risk score, and the main behavioral drivers behind that risk.',
+        'Live app: https://social-media-mental-health-risk-analysis-g47u6z7es5mfgytvfxqhf.streamlit.app/'
+      ],
+      footer: ''
+    },
+    {
+      id: 'models',
+      title: 'Machine Learning Models – What We Used & Why',
+      main: 'Core modeling choices behind our risk scores.',
+      bg: 'jkjk.jpg',
+      bullets: [
+        'Random Forest Classifier (main model): handles mixed features (counts, ratios, timing) and captures complex non-linear patterns.',
+        'Why Random Forest? It is robust to noise, works well with limited data, and produces stable probability outputs that we convert into risk scores.',
+        'Model outputs: risk category (High / Moderate / Low), numeric risk score (0–1000), and probabilities p_high, p_moderate, and p_low.',
+        'We also read feature importance to understand which behaviors (late-night usage, high streaks, negative ratio) push a user into higher risk.',
+        'Sentiment label processing (pre-model stage): every post/comment is labeled Negative, Neutral, or Positive.',
+        'These labels power features like neg_ratio, neg_posts, and neg_likes, which strongly influence the final risk classification.'
+      ],
+      footer: ''
+    },
+    {
+      id: 'conclusion',
+      title: 'Conclusion & Final Message',
+      main: 'What this project ultimately delivers.',
+      bg: 'jkjk.jpg',
+      bullets: [
+        'Our project uses AI and machine learning to understand emotional risk based on social media engagement patterns.',
+        'We track how negative interactions and stressful activity build up over time for different users.',
+        'By visualizing these behavioral and emotional patterns through our dashboard, we support healthier digital experiences.',
+        'The system can help platforms, researchers, and communities notice early signs of overload and respond with care.'
+      ],
+      footer: '“Better insights lead to healthier communities — online and beyond.” • Thank you.'
+    }
+  ];
+
+  let currentSlide = 0;
+
+  function renderSlide() {
+    const s = slides[currentSlide];
+
+    // quote layout
+    slideBox.classList.toggle('quote', !!(s.isQuote));
+
+    // theme for normal text slides (from index 1, except pure image)
+    const themed = currentSlide >= 1 && !s.isImageOnly;
+    slideBox.classList.toggle('theme-main', themed);
+
+    // background
+    if (s.bg && s.bg.trim() !== '') {
+      slideBox.classList.add('bg-slide');
+      if (s.isImageOnly) {
+        slideBox.style.backgroundImage = `url('${s.bg}')`;
+      } else {
+        slideBox.style.backgroundImage =
+          `linear-gradient(120deg, rgba(0,0,0,0.55), rgba(0,0,0,0.92)), url('${s.bg}')`;
+      }
+    } else {
+      slideBox.classList.remove('bg-slide');
+      slideBox.style.backgroundImage = '';
+    }
+
+    // pure image slide: hide text
+    if (s.isImageOnly) {
+      slideTitle.style.display  = 'none';
+      slideMain.style.display   = 'none';
+      slideBullets.style.display= 'none';
+      slideFooter.style.display = 'none';
+    } else {
+      slideTitle.style.display  = '';
+      slideMain.style.display   = '';
+      slideBullets.style.display= (s.bullets && s.bullets.length) ? 'block' : 'none';
+      slideFooter.style.display = s.footer ? 'block' : 'none';
+
+      slideTitle.textContent = s.title || '';
+      slideMain.innerHTML = s.isQuote ? `<span>${s.main}</span>` : (s.main || '');
+
+      slideBullets.innerHTML = '';
+      (s.bullets || []).forEach(text => {
+        const li = document.createElement('li');
+        const urlRegex = /(https?:\/\/[^\s]+)/g;
+        if (urlRegex.test(text)) {
+          const parts = text.split(urlRegex);
+          parts.forEach(part => {
+            if (urlRegex.test(part)) {
+              const a = document.createElement('a');
+              a.href = part;
+              a.textContent = part;
+              a.target = '_blank';
+              a.rel = 'noopener noreferrer';
+              li.appendChild(a);
+            } else if (part) {
+              li.appendChild(document.createTextNode(part));
+            }
+          });
+        } else {
+          li.textContent = text;
+        }
+        slideBullets.appendChild(li);
+      });
+
+      slideFooter.textContent = s.footer || '';
+    }
+
+    slideCounter.textContent = `${currentSlide + 1} / ${slides.length}`;
+
+    // restart slide animation
+    slideBox.style.animation = 'none';
+    void slideBox.offsetWidth;
+    slideBox.style.animation = 'slideIn .35s ease';
+  }
+
+  function goToSlide(index) {
+    if (index < 0) index = slides.length - 1;
+    if (index >= slides.length) index = 0;
+    currentSlide = index;
+    renderSlide();
+  }
+
+  const openPanel = (title, slideIndex = 0)=>{
+    panelTitle.textContent = title || 'Details';
+    panelSub.textContent = '';   // no "Opening · Quote" text
+    goToSlide(slideIndex);
+    overlay.classList.add('show');
+    overlay.setAttribute('aria-hidden','false');
+  };
+
+  const closePanel = ()=>{
+    overlay.classList.remove('show');
+    overlay.setAttribute('aria-hidden','true');
+  };
+  document.getElementById('closeOverlay').addEventListener('click', closePanel);
+  overlay.addEventListener('click',(e)=>{ if(e.target===overlay) closePanel(); });
+
+  // keyboard for overlay (Esc close, arrows navigate)
+  window.addEventListener('keydown',(e)=>{
+    if (!overlay.classList.contains('show')) return;
+    if (e.key === 'Escape') { closePanel(); return; }
+    if (e.key === 'ArrowRight') { goToSlide(currentSlide + 1); }
+    if (e.key === 'ArrowLeft') { goToSlide(currentSlide - 1); }
+  });
+
+  prevSlideBtn.addEventListener('click', () => goToSlide(currentSlide - 1));
+  nextSlideBtn.addEventListener('click', () => goToSlide(currentSlide + 1));
+
+  // Fullscreen toggle (overlay element)
+  fullscreenBtn.addEventListener('click', async () => {
+    try {
+      if (!document.fullscreenElement) {
+        await overlay.requestFullscreen();
+        fullscreenBtn.textContent = '⤡';
+      } else {
+        await document.exitFullscreen();
+        fullscreenBtn.textContent = '⤢';
+      }
+    } catch (e) {
+      console.log('Fullscreen error', e);
+    }
+  });
+
+  // Click hero -> open slides (start from quote)
+  document.getElementById('heroClickable').addEventListener('click', ()=>{
+    openPanel(
+      document.getElementById('heroTitle').textContent,
+      0              // first slide
+    );
+  });
+
+  // NOTE: cards now only open external links (no JS needed)
+</script>
+</body>
+</html>
