@@ -376,6 +376,23 @@
     text-align:center;
   }
 
+  /* Final quote style (large, bold, centered) */
+  .ppt-final-quote{
+    margin-top:22px;
+    font-size:26px;
+    font-weight:800;
+    text-align:center;
+    color:inherit;
+    line-height:1.2;
+  }
+  .ppt-final-quote .thank-you{
+    display:block;
+    font-size:18px;
+    font-weight:600;
+    margin-top:10px;
+    opacity:0.95;
+  }
+
   /* THEME from slide 2 onwards (except pure image) */
   .placeholder.theme-main{
     background:radial-gradient(120% 200% at 0% 0%, #0b1120 0%, #020617 55%, #000000 100%);
@@ -438,11 +455,13 @@
     <h1>Welcome to Our Project Presentation</h1>
     <div class="profiles">
       <div class="profile" data-name="Bala">
-        <div class="box"><img src="bala.jpeg" alt="Bala"></div>
+        <!-- image path fixed -->
+        <div class="box"><img src="home/bala.jpeg" alt="Bala"></div>
         <div class="name">Bala</div>
       </div>
       <div class="profile" data-name="Valentina">
-        <div class="box"><img src="s.jpeg" alt="Valentina"></div>
+        <!-- image path fixed -->
+        <div class="box"><img src="home/s.jpeg" alt="Valentina"></div>
         <div class="name">Valentina</div>
       </div>
     </div>
@@ -467,7 +486,8 @@
   <!-- HOME -->
   <div id="home" class="tabview active">
     <div class="hero" id="heroClickable">
-      <img id="heroImage" src="pro.jpeg" alt="Hero">
+      <!-- hero image path fixed -->
+      <img id="heroImage" src="home/pro.jpeg" alt="Hero">
       <div class="hero-content">
         <div class="kicker"></div>
         <div id="heroTitle" class="title">Social Media Engagement and Mental Health Risk Analysis</div>
@@ -484,7 +504,8 @@
 
         <!-- Bala card -->
         <div class="card">
-          <img src="p1.jpeg" alt="Bala">
+          <!-- card image path fixed -->
+          <img src="home/p1.jpeg" alt="Bala">
           <div class="card-content">
             <h3 class="card-name">Balakrishna Reddy</h3>
             <p class="card-role"> Data Engineering & Machine Learning</p>
@@ -498,7 +519,8 @@
 
         <!-- Val card -->
         <div class="card">
-          <img src="p2.jpeg" alt="Valentina">
+          <!-- card image path fixed -->
+          <img src="home/p2.jpeg" alt="Valentina">
           <div class="card-content">
             <h3 class="card-name">Valentina Varani</h3>
             <p class="card-role">International Student · D1 Athlete · Corporate Finance</p>
@@ -511,7 +533,8 @@
 
         <!-- Dylan card -->
         <div class="card">
-          <img src="p3.jpg" alt="Professor Dylan Bernardi">
+          <!-- card image path fixed -->
+          <img src="home/p3.jpg" alt="Professor Dylan Bernardi">
           <div class="card-content">
             <h3 class="card-name">Professor Dylan Bernardi</h3>
             <p class="card-role">Backend Engineer @ GitLab · Visiting Lecturer @ UOP</p>
@@ -542,6 +565,7 @@
         <h2 id="slideTitle" class="ppt-slide-title"></h2>
         <p id="slideMain" class="ppt-slide-main"></p>
         <ul id="slideBullets" class="ppt-slide-bullets"></ul>
+          <p id="finalQuote" class="ppt-final-quote" style="display:none"></p>
         <p id="slideFooter" class="ppt-slide-footer"></p>
       </div>
 
@@ -560,7 +584,7 @@
     document.getElementById('profiles').classList.remove('active');
     document.getElementById('app').classList.add('active');
 
-    const HERO_IMAGE_PATH = "pro.jpeg";
+    const HERO_IMAGE_PATH = "home/pro.jpeg";  // fixed
     const HERO_TITLE_TEXT = "Social Media Engagement and Mental Health Risk Analysis";
     document.getElementById('heroImage').src = HERO_IMAGE_PATH;
     document.getElementById('heroTitle').textContent = HERO_TITLE_TEXT;
@@ -591,6 +615,7 @@
   const nextSlideBtn = document.getElementById('nextSlide');
   const slideBox     = document.getElementById('slideBox');
   const fullscreenBtn = document.getElementById('fullscreenBtn');
+  const finalQuoteEl  = document.getElementById('finalQuote');
 
   // --- PPT slides data (6 slides, each with its own bg) ---
   const slides = [
@@ -599,7 +624,7 @@
       title: 'Opening Quote',
       main: '“I want technology to understand how we feel, not just what we click.”',
       isQuote: true,
-      bg: '1.jpg',    // quote background
+      bg: 'home/1.jpg',    // quote background fixed
       bullets: [],
       footer: ''
     },
@@ -607,7 +632,7 @@
       id: 'intro',
       title: 'Introduction',
       main: 'What this project is really about.',
-      bg: 'jkjk.jpg',   // dark smoke / texture background
+      bg: 'home/jkjk.jpg',   // dark smoke / texture background fixed
       bullets: [
         'Our project analyzes how social media engagement patterns can reflect emotional risks and mental health signals.',
         'We collect Reddit data (posts + comments) and apply NLP to classify each post/comment as positive, neutral, or negative.',
@@ -623,7 +648,7 @@
       id: 'data-method',
       title: 'Data Pipeline',
       main: '',
-      bg: 'pip.jpeg',       // pipeline image
+      bg: 'home/pip.jpeg',       // pipeline image fixed
       isImageOnly: true,
       bullets: [],
       footer: ''
@@ -632,7 +657,7 @@
       id: 'dashboard',
       title: 'Dashboard Overview – Real Panels',
       main: 'How we actually explore risk and engagement.',
-      bg: 'jkjk.jpg',
+      bg: 'home/jkjk.jpg',
       bullets: [
         'Our interactive dashboard contains 4 main graphs and 1 detailed table for risk exploration.',
         'We monitor risk distribution, user engagement behavior, emotion trends, and key feature impact in one view.',
@@ -645,7 +670,7 @@
       id: 'models',
       title: 'Machine Learning Models – What We Used & Why',
       main: 'Core modeling choices behind our risk scores.',
-      bg: 'jkjk.jpg',
+      bg: 'home/jkjk.jpg',
       bullets: [
         'Random Forest Classifier (main model): handles mixed features (counts, ratios, timing) and captures complex non-linear patterns.',
         'Why Random Forest? It is robust to noise, works well with limited data, and produces stable probability outputs that we convert into risk scores.',
@@ -660,14 +685,16 @@
       id: 'conclusion',
       title: 'Conclusion & Final Message',
       main: 'What this project ultimately delivers.',
-      bg: 'jkjk.jpg',
+      bg: 'home/jkjk.jpg',
       bullets: [
         'Our project uses AI and machine learning to understand emotional risk based on social media engagement patterns.',
         'We track how negative interactions and stressful activity build up over time for different users.',
         'By visualizing these behavioral and emotional patterns through our dashboard, we support healthier digital experiences.',
         'The system can help platforms, researchers, and communities notice early signs of overload and respond with care.'
       ],
-      footer: '“Better insights lead to healthier communities — online and beyond.” • Thank you.'
+      finalQuote: '“Better insights lead to healthier communities — online and beyond.”',
+      thankYou: 'Thank you.',
+      footer: ''
     }
   ];
 
@@ -736,7 +763,19 @@
         slideBullets.appendChild(li);
       });
 
-      slideFooter.textContent = s.footer || '';
+      // show/hide final quote (used for conclusion slide)
+      if (s.finalQuote) {
+        // render quote as bold heading and thank-you on next line
+        const thank = s.thankYou ? `<span class="thank-you">${s.thankYou}</span>` : '';
+        finalQuoteEl.innerHTML = `${s.finalQuote}${thank}`;
+        finalQuoteEl.style.display = 'block';
+        slideFooter.style.display = 'none';
+      } else {
+        finalQuoteEl.innerHTML = '';
+        finalQuoteEl.style.display = 'none';
+        slideFooter.textContent = s.footer || '';
+        slideFooter.style.display = s.footer ? 'block' : 'none';
+      }
     }
 
     slideCounter.textContent = `${currentSlide + 1} / ${slides.length}`;
