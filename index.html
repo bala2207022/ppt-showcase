@@ -523,7 +523,7 @@
           <img src="home/p2.jpeg" alt="Valentina">
           <div class="card-content">
             <h3 class="card-name">Valentina Varani</h3>
-            <p class="card-role">International Student · D1 Athlete · Corporate Finance</p>
+            <p class="card-role">Data Collection & Analytics</p>
             <div class="card-links">
               <a href="https://linkedin.com/in/valentinavarani" target="_blank" rel="noopener noreferrer">LinkedIn</a>
               <a href="https://gitlab.com/v_varani" target="_blank" rel="noopener noreferrer">GitLab</a>
@@ -643,7 +643,22 @@
         'The goal is to reveal emotional trends early and support healthier digital environments.'
       ],
       footer: ''
-    },
+      },
+        {
+        id: 'data-cleaning',
+        title: 'Data Collection & Cleaning',
+        main: 'How we collected and prepared Reddit data before modeling.',
+        bg: 'home/jkjk.jpg',
+        bullets: [
+          'We collected a sample of public Reddit posts and comments from selected communities using the Reddit API (PRAW).',
+          'For each record we stored: post ID, user ID, subreddit, full text, score, number of comments, and timestamp.',
+          'Raw text often contained URLs, emojis, usernames, HTML entities, and very short or empty messages.',
+          'Cleaning steps: removed deleted/empty posts, stripped URLs/user mentions, lowercased text, removed extra spaces and non-text symbols.',
+          'We filtered out obvious spam/noise and kept only English posts that had enough text to be meaningful.',
+          'After cleaning, we saved the dataset as cleaned_data.csv — this file is the starting point for feature engineering and modeling.'
+        ],
+        footer: ''
+      },
     {
       id: 'data-method',
       title: 'Data Pipeline',
